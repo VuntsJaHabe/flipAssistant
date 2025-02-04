@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
+	"strconv"
 )
 
 type ItemPrice struct {
@@ -16,14 +16,14 @@ type ItemPrice struct {
 
 type ItemData map[string]ItemPrice
 
-type ItemInfo struct {
+type Item struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
 	// Include other fields as needed
 }
 
 type APIResponse struct {
-	Data map[string]ItemPrice `json:"data"` // <-- Extract the "data" field
+	Data map[string]ItemPrice `json:"data"`
 }
 
 func fetchOSRSData() (ItemData, error) {
@@ -70,25 +70,101 @@ func itemsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Extract query parameters for pagination and filtering
+	pageStr := r.URL.Query().Get("page")
+	pageSizeStr := r.URL.Query().Get("pageSize")
+	minMarginStr := r.URL.Query().Get("minMargin")
+	maxMarginStr := r.URL.Query().Get("maxMargin")
+	minBuyStr := r.URL.Query().Get("minBuy")
+	maxBuyStr := r.URL.Query().Get("maxBuy")
+	minSellStr := r.URL.Query().Get("minSell")
+	maxSellStr := r.URL.Query().Get("maxSell")
+
+	// Default values for pagination
+	page := 1
+	pageSize := 10
+
+	if pageStr != "" {
+		var err error
+		page, err = strconv.Atoi(pageStr)
+		if err != nil {
+			http.Error(w, "Invalid page number", http.StatusBadRequest)
+			return
+		}
+	}
+
+	if pageSizeStr != "" {
+		var err error
+		pageSize, err = strconv.Atoi(pageSizeStr)
+		if err != nil {
+			http.Error(w, "Invalid page size", http.StatusBadRequest)
+			return
+		}
+	}
+
 	data, err := fetchOSRSData()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
+	// Filter the items
 	var filteredItems []map[string]interface{}
-	for itemID, price := range data {
+	for itemIDStr, price := range data {
 		margin := price.High - price.Low
 		if margin > 1000 {
-			// Get the item name from the itemNames map
-			name, ok := itemNames[itemID]
-			if !ok {
-				name = "Unknown" // Fallback name if itemID is not found
+			itemID, err := strconv.Atoi(itemIDStr)
+			if err != nil {
+				continue
 			}
 
+			item, ok := itemNames[itemID]
+			if !ok {
+				item.Name = "Unknown"
+			}
+
+			// Apply additional filters
+			if minMarginStr != "" {
+				minMargin, err := strconv.Atoi(minMarginStr)
+				if err == nil && margin < minMargin {
+					continue
+				}
+			}
+			if maxMarginStr != "" {
+				maxMargin, err := strconv.Atoi(maxMarginStr)
+				if err == nil && margin > maxMargin {
+					continue
+				}
+			}
+			if minBuyStr != "" {
+				minBuy, err := strconv.Atoi(minBuyStr)
+				if err == nil && price.Low < minBuy {
+					continue
+				}
+			}
+			if maxBuyStr != "" {
+				maxBuy, err := strconv.Atoi(maxBuyStr)
+				if err == nil && price.Low > maxBuy {
+					continue
+				}
+			}
+			if minSellStr != "" {
+				minSell, err := strconv.Atoi(minSellStr)
+				if err == nil && price.High < minSell {
+					continue
+				}
+			}
+			if maxSellStr != "" {
+				maxSell, err := strconv.Atoi(maxSellStr)
+				if err == nil && price.High > maxSell {
+					continue
+				}
+			}
+
+			// Add the item to the list
 			filteredItems = append(filteredItems, map[string]interface{}{
 				"id":     itemID,
-				"name":   name,
+				"name":   item.Name,
 				"buy":    price.Low,
 				"sell":   price.High,
 				"margin": margin,
@@ -96,8 +172,16 @@ func itemsHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	// Pagination: Slice the items array
+	start := (page - 1) * pageSize
+	end := start + pageSize
+	if end > len(filteredItems) {
+		end = len(filteredItems)
+	}
+	paginatedItems := filteredItems[start:end]
+
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(filteredItems)
+	json.NewEncoder(w).Encode(paginatedItems)
 }
 
 func loadItemData() (map[int]string, error) {
@@ -110,7 +194,7 @@ func loadItemData() (map[int]string, error) {
 	}
 
 	// Use map[string]ItemInfo to match JSON structure
-	var items map[string]ItemInfo
+	var items map[string]Item
 	err = json.Unmarshal(data, &items)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse JSON: %v", err)
@@ -130,7 +214,7 @@ func loadItemData() (map[int]string, error) {
 	return itemMap, nil
 }
 
-var itemNames map[string]string
+var itemNames map[int]Item
 
 func loadItemNames() error {
 	// Read the items.json file
@@ -139,20 +223,31 @@ func loadItemNames() error {
 		return fmt.Errorf("error reading items.json: %v", err)
 	}
 
-	// Parse JSON into the itemNames map
-	err = json.Unmarshal(data, &itemNames)
+	// Parse the JSON data into a map
+	var items map[string]Item
+	err = json.Unmarshal(data, &items)
 	if err != nil {
 		return fmt.Errorf("error parsing items.json: %v", err)
+	}
+
+	// Convert map keys to integers and store the item names
+	itemNames = make(map[int]Item)
+	for key, item := range items {
+		id, err := strconv.Atoi(key)
+		if err != nil {
+			return fmt.Errorf("error converting item ID to integer: %v", err)
+		}
+		itemNames[id] = item
 	}
 
 	return nil
 }
 
 func main() {
-
 	err := loadItemNames()
 	if err != nil {
-		log.Fatalf("Error loading item names: %v", err)
+		fmt.Println("Error loading item names:", err)
+		return
 	}
 	// Set up the HTTP server
 	http.HandleFunc("/api/items", itemsHandler)
