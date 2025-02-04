@@ -14,6 +14,18 @@ function App() {
     minSell: '',
     maxSell: ''
   });
+  const resetFilters = () => {
+    setFilters({
+      minMargin: '',
+      maxMargin: '',
+      minBuy: '',
+      maxBuy: '',
+      minSell: '',
+      maxSell: ''
+    });
+  };
+
+  <button onClick={resetFilters}>Reset Filters</button>
 
   useEffect(() => {
     const { minMargin, maxMargin, minBuy, maxBuy, minSell, maxSell } = filters;
@@ -30,6 +42,7 @@ function App() {
     fetch(`http://localhost:8080/api/items?${filterParams.toString()}`)
       .then((res) => res.json())
       .then((data) => {
+        console.log("Fetched items:", data);
         setItems(data);
         setLoading(false);
       })
@@ -61,19 +74,19 @@ function App() {
       <h1>OSRS Flipping Assistant</h1>
 
       {/* Filter Inputs */}
-      <div>
-        <label>Min Margin: </label>
-        <input type="number" name="minMargin" value={filters.minMargin} onChange={handleFilterChange} />
-        <label>Max Margin: </label>
-        <input type="number" name="maxMargin" value={filters.maxMargin} onChange={handleFilterChange} />
-        <label>Min Buy Price: </label>
-        <input type="number" name="minBuy" value={filters.minBuy} onChange={handleFilterChange} />
-        <label>Max Buy Price: </label>
-        <input type="number" name="maxBuy" value={filters.maxBuy} onChange={handleFilterChange} />
-        <label>Min Sell Price: </label>
-        <input type="number" name="minSell" value={filters.minSell} onChange={handleFilterChange} />
-        <label>Max Sell Price: </label>
-        <input type="number" name="maxSell" value={filters.maxSell} onChange={handleFilterChange} />
+      <div className="filters">
+          <label>Min Margin: </label>
+          <input type="number" name="minMargin" value={filters.minMargin} onChange={handleFilterChange} />
+          <label>Max Margin: </label>
+          <input type="number" name="maxMargin" value={filters.maxMargin} onChange={handleFilterChange} />
+          <label>Min Buy Price: </label>
+          <input type="number" name="minBuy" value={filters.minBuy} onChange={handleFilterChange} />
+          <label>Max Buy Price: </label>
+          <input type="number" name="maxBuy" value={filters.maxBuy} onChange={handleFilterChange} />
+          <label>Min Sell Price: </label>
+          <input type="number" name="minSell" value={filters.minSell} onChange={handleFilterChange} />
+          <label>Max Sell Price: </label>
+          <input type="number" name="maxSell" value={filters.maxSell} onChange={handleFilterChange} />
       </div>
 
       {/* Displaying the loading status */}
@@ -94,22 +107,22 @@ function App() {
           )}
 
           {/* Pagination Controls */}
-          <div>
-            <button onClick={() => handlePageChange(page - 1)} disabled={page === 1}>
-              Previous
-            </button>
-            <button onClick={() => handlePageChange(page + 1)} disabled={items.length < pageSize}>
-              Next
-            </button>
-            <div>
-              <label>Items per page: </label>
-              <select value={pageSize} onChange={handlePageSizeChange}>
-                <option value={10}>10</option>
-                <option value={20}>20</option>
-                <option value={50}>50</option>
-              </select>
+          <div className="pagination">
+                <button onClick={() => handlePageChange(page - 1)} disabled={page === 1}>
+                    Previous
+                </button>
+                <button onClick={() => handlePageChange(page + 1)} disabled={items.length < pageSize}>
+                    Next
+                </button>
+                <div>
+                    <label>Items per page: </label>
+                    <select value={pageSize} onChange={handlePageSizeChange}>
+                        <option value={10}>10</option>
+                        <option value={20}>20</option>
+                        <option value={50}>50</option>
+                    </select>
+                </div>
             </div>
-          </div>
         </div>
       )}
     </div>

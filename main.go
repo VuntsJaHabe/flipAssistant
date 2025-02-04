@@ -59,16 +59,6 @@ func fetchOSRSData() (ItemData, error) {
 }
 
 func itemsHandler(w http.ResponseWriter, r *http.Request) {
-	// Add CORS headers
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-
-	// Handle preflight OPTIONS request
-	if r.Method == "OPTIONS" {
-		w.WriteHeader(http.StatusOK)
-		return
-	}
 
 	// Extract query parameters for pagination and filtering
 	pageStr := r.URL.Query().Get("page")
@@ -112,7 +102,7 @@ func itemsHandler(w http.ResponseWriter, r *http.Request) {
 	var filteredItems []map[string]interface{}
 	for itemIDStr, price := range data {
 		margin := price.High - price.Low
-		if margin > 1000 {
+		if margin > 0 {
 			itemID, err := strconv.Atoi(itemIDStr)
 			if err != nil {
 				continue
@@ -243,6 +233,19 @@ func loadItemNames() error {
 	return nil
 }
 
+func enableCORS(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+		next(w, r)
+	}
+}
+
 func main() {
 	err := loadItemNames()
 	if err != nil {
@@ -250,7 +253,7 @@ func main() {
 		return
 	}
 	// Set up the HTTP server
-	http.HandleFunc("/api/items", itemsHandler)
+	http.HandleFunc("/api/items", enableCORS(itemsHandler))
 
 	fmt.Println("Server is running on http://localhost:8080")
 	http.ListenAndServe(":8080", nil)
