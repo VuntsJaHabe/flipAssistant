@@ -9,11 +9,12 @@ import (
 
 func SuggestFlips(c *gin.Context) {
 	rows, err := database.DB.Query(`
-		SELECT item_id, AVG(buy_price) AS avg_buy, AVG(sell_price) AS avg_sell
+		SELECT item_id, sma5_buy, sma5_sell
 		FROM item_prices
+		WHERE sma5_buy IS NOT NULL AND sma5_sell IS NOT NULL
 		GROUP BY item_id
-		HAVING avg_sell - avg_buy > 1000
-		ORDER BY (avg_sell - avg_buy) DESC
+		HAVING sma5_sell - sma5_buy > 1000
+		ORDER BY (sma5_sell - sma5_buy) DESC
 		LIMIT 10;
 	`)
 	if err != nil {
@@ -24,16 +25,17 @@ func SuggestFlips(c *gin.Context) {
 
 	var flips []map[string]interface{}
 	for rows.Next() {
-		var itemID, avgBuy, avgSell int
-		if err := rows.Scan(&itemID, &avgBuy, &avgSell); err != nil {
+		var itemID int
+		var smaBuy, smaSell float64
+		if err := rows.Scan(&itemID, &smaBuy, &smaSell); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to parse data"})
 			return
 		}
 		flips = append(flips, map[string]interface{}{
-			"item_id":  itemID,
-			"avg_buy":  avgBuy,
-			"avg_sell": avgSell,
-			"profit":   avgSell - avgBuy,
+			"item_id":   itemID,
+			"sma5_buy":  smaBuy,
+			"sma5_sell": smaSell,
+			"profit":    smaSell - smaBuy,
 		})
 	}
 

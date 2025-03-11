@@ -1,7 +1,8 @@
-package main
+package scripts
 
 import (
 	"encoding/json"
+	"flipAssistant/database"
 	"fmt"
 	"log"
 	"time"
@@ -9,7 +10,7 @@ import (
 	"github.com/go-resty/resty/v2"
 )
 
-// Struct matching API response
+// OSRSItem represents an item price data structure
 type OSRSItem struct {
 	High     int `json:"high"`     // Sell price
 	HighTime int `json:"highTime"` // Timestamp for high price
@@ -25,10 +26,6 @@ func FetchAndStorePrices(itemID int) {
 		return
 	}
 
-	// Debug: Print raw response
-	log.Println("API Response:", string(resp.Body()))
-
-	// Define a struct to parse the response
 	var response struct {
 		Data map[string]map[string]interface{} `json:"data"`
 	}
@@ -39,21 +36,47 @@ func FetchAndStorePrices(itemID int) {
 		return
 	}
 
-	// Check for the specific item in the response
+	// Check if the item exists in the response
 	itemKey := fmt.Sprintf("%d", itemID)
 	if itemData, exists := response.Data[itemKey]; exists {
-		// Extract price data if the item exists
-		highPrice := itemData["high"]
-		lowPrice := itemData["low"]
-		log.Printf("Item %d - High Price: %v, Low Price: %v", itemID, highPrice, lowPrice)
+		highPrice := int(itemData["high"].(float64))
+		lowPrice := int(itemData["low"].(float64))
+
+		// Insert new price data
+		_, err := database.DB.Exec(`
+			INSERT INTO item_prices (item_id, buy_price, sell_price) 
+			VALUES (?, ?, ?)
+		`, itemID, lowPrice, highPrice)
+		if err != nil {
+			log.Println("Error inserting data:", err)
+			return
+		}
+
+		// Calculate SMA5 and update database
+		smaBuy, smaSell, err := database.CalculateSMA5(itemID)
+		if err != nil {
+			log.Println("Error calculating SMA5:", err)
+			return
+		}
+
+		_, err = database.DB.Exec(`
+			UPDATE item_prices 
+			SET sma5_buy = ?, sma5_sell = ? 
+			WHERE item_id = ? 
+			ORDER BY timestamp DESC 
+			LIMIT 1
+		`, smaBuy, smaSell, itemID)
+		if err != nil {
+			log.Println("Error updating SMA5:", err)
+		}
 	} else {
-		log.Printf("Item %d not found in response.", itemID)
+		log.Printf("Item %d not found in API response.\n", itemID)
 	}
 }
 
 func main() {
 	for {
-		FetchAndStorePrices(11840)
+		FetchAndStorePrices(11840) // Example item ID
 		time.Sleep(10 * time.Minute)
 	}
 }

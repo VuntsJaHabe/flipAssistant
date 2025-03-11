@@ -3,6 +3,7 @@ package main
 import (
 	"flipAssistant/database"
 	"flipAssistant/routes"
+	"flipAssistant/scripts"
 	"log"
 
 	"github.com/gin-gonic/gin"
@@ -11,6 +12,9 @@ import (
 func main() {
 	// Initialize the database
 	database.InitDB()
+
+	// Fetch latest prices (runs once at startup)
+	go scripts.FetchAndStorePrices(11840) // Example item
 
 	// Create a new Gin router
 	r := gin.Default()
