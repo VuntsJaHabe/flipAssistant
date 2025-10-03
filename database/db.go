@@ -18,15 +18,20 @@ func InitDB() {
 
 	// Create table for storing item prices with moving averages
 	createTable := `
-	CREATE TABLE IF NOT EXISTS item_prices (
-		id INTEGER PRIMARY KEY,
-		item_id INTEGER,
-		timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-		buy_price INTEGER,
-		sell_price INTEGER,
-		sma5_buy REAL DEFAULT NULL,
-		sma5_sell REAL DEFAULT NULL
-	);`
+CREATE TABLE IF NOT EXISTS item_prices (
+    id INTEGER PRIMARY KEY,
+    item_id INTEGER,
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    buy_price INTEGER,
+    sell_price INTEGER
+);
+
+CREATE TABLE IF NOT EXISTS item_analytics (
+    item_id INTEGER PRIMARY KEY,
+    sma5_buy REAL,
+    sma5_sell REAL,
+    last_updated DATETIME DEFAULT CURRENT_TIMESTAMP
+);`
 	_, err = DB.Exec(createTable)
 	if err != nil {
 		log.Fatal(err)
@@ -65,4 +70,24 @@ func CalculateSMA5(itemID int) (float64, float64, error) {
 	}
 
 	return totalBuy / float64(count), totalSell / float64(count), nil
+}
+
+func UpdateItemAnalytics(itemID int) error {
+	// Calculate SMA5
+	smaBuy, smaSell, err := CalculateSMA5(itemID)
+	if err != nil {
+		return err
+	}
+
+	// Update or insert into item_analytics
+	_, err = DB.Exec(`
+        INSERT INTO item_analytics (item_id, sma5_buy, sma5_sell)
+        VALUES (?, ?, ?)
+        ON CONFLICT(item_id) DO UPDATE SET
+        sma5_buy = ?,
+        sma5_sell = ?,
+        last_updated = CURRENT_TIMESTAMP
+    `, itemID, smaBuy, smaSell, smaBuy, smaSell)
+
+	return err
 }

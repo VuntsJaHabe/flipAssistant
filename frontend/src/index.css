@@ -1,0 +1,90 @@
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: #3a3a3a;
+  
+  /* OSRS Wiki color palette */
+  --osrs-brown: #8B4513;
+  --osrs-dark-brown: #654321;
+  --osrs-light-brown: #CD853F;
+  --osrs-gold: #FFD700;
+  --osrs-dark-gold: #DAA520;
+  --osrs-cream: #FFF8DC;
+  --osrs-parchment: #F5DEB3;
+  --osrs-green: #228B22;
+  --osrs-red: #DC143C;
+  --osrs-blue: #4169E1;
+  --osrs-gray: #696969;
+  
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  width: 100%;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(139, 69, 19, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
+    linear-gradient(135deg, #FFF8DC 0%, #F5DEB3 50%, #DEB887 100%);
+  background-attachment: fixed;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  line-height: 1.2;
+}
+
+button {
+  border-radius: 4px;
+  border: 2px solid var(--osrs-dark-brown);
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  font-weight: bold;
+  font-family: inherit;
+  background: linear-gradient(to bottom, var(--osrs-gold) 0%, var(--osrs-dark-gold) 100%);
+  color: var(--osrs-dark-brown);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-shadow: 1px 1px 0px rgba(255,255,255,0.5);
+  box-shadow: 
+    inset 1px 1px 0px rgba(255,255,255,0.8),
+    inset -1px -1px 0px rgba(0,0,0,0.3),
+    2px 2px 4px rgba(0,0,0,0.2);
+}
+
+button:hover {
+  background: linear-gradient(to bottom, #FFE55C 0%, #FFD700 100%);
+  transform: translateY(-1px);
+  box-shadow: 
+    inset 1px 1px 0px rgba(255,255,255,0.9),
+    inset -1px -1px 0px rgba(0,0,0,0.3),
+    3px 3px 6px rgba(0,0,0,0.3);
+}
+
+button:active {
+  transform: translateY(1px);
+  box-shadow: 
+    inset 1px 1px 2px rgba(0,0,0,0.3),
+    1px 1px 2px rgba(0,0,0,0.2);
+}
+
+button:focus,
+button:focus-visible {
+  outline: 2px solid var(--osrs-blue);
+  outline-offset: 2px;
+}

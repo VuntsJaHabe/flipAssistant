@@ -18,7 +18,6 @@ func GetItemHistory(c *gin.Context) {
 	WHERE item_id = ?
 	ORDER BY timestamp DESC
 `, itemID)
-
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
 		return
@@ -28,15 +27,15 @@ func GetItemHistory(c *gin.Context) {
 	var history []map[string]interface{}
 	for rows.Next() {
 		var timestamp string
-		var buyPrice, sellPrice int
+		var buyPrice, sellPrice float64
 		if err := rows.Scan(&timestamp, &buyPrice, &sellPrice); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to parse data"})
 			return
 		}
 		history = append(history, map[string]interface{}{
 			"timestamp":  timestamp,
-			"buy_price":  buyPrice,
-			"sell_price": sellPrice,
+			"buy_price":  int(buyPrice),
+			"sell_price": int(sellPrice),
 		})
 	}
 

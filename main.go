@@ -5,7 +5,9 @@ import (
 	"flipAssistant/routes"
 	"flipAssistant/scripts"
 	"log"
+	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -13,15 +15,38 @@ func main() {
 	// Initialize the database
 	database.InitDB()
 
-	// Fetch latest prices (runs once at startup)
-	go scripts.FetchAndStorePrices(11840) // Example item
+	// Load items data from JSON
+	if err := database.LoadItemsData(); err != nil {
+		log.Printf("Warning: Could not load items data: %v", err)
+	}
+
+	// Get popular items to track (now much more comprehensive)
+	popularItems := database.GetPopularItems()
+	log.Printf("Tracking %d popular items for flip opportunities", len(popularItems))
+
+	// Fetch prices for all items in a single API call (API-friendly)
+	go func() {
+		for {
+			log.Println("Fetching prices for all tracked items...")
+			scripts.FetchAndStorePricesForAllItems(popularItems)
+
+			// Wait 10 minutes between batch updates to be respectful to the API
+			// This means we update all 141 items with just 1 API call every 10 minutes
+			time.Sleep(10 * time.Minute)
+		}
+	}()
 
 	// Create a new Gin router
 	r := gin.Default()
 
+	// Add CORS middleware
+	r.Use(cors.Default())
+
 	// Define API routes
 	r.GET("/item-history/:id", routes.GetItemHistory)
 	r.GET("/suggest-flips", routes.SuggestFlips)
+	r.GET("/item-info/:id", routes.GetItemInfo)
+	r.GET("/tracked-items", routes.GetAllTrackedItems)
 
 	// Start server
 	log.Println("Server running on :8080")

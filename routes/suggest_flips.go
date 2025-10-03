@@ -2,6 +2,7 @@ package routes
 
 import (
 	"flipAssistant/database"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -9,15 +10,15 @@ import (
 
 func SuggestFlips(c *gin.Context) {
 	rows, err := database.DB.Query(`
-		SELECT item_id, sma5_buy, sma5_sell
-		FROM item_prices
-		WHERE sma5_buy IS NOT NULL AND sma5_sell IS NOT NULL
-		GROUP BY item_id
-		HAVING sma5_sell - sma5_buy > 1000
-		ORDER BY (sma5_sell - sma5_buy) DESC
-		LIMIT 10;
-	`)
+        SELECT a.item_id, a.sma5_buy, a.sma5_sell, 
+               (a.sma5_sell - a.sma5_buy) AS profit_margin
+        FROM item_analytics a
+        WHERE a.sma5_buy > 0 AND a.sma5_sell > 0
+        ORDER BY profit_margin DESC
+        LIMIT 10;
+    `)
 	if err != nil {
+		log.Printf("Query error: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database query failed"})
 		return
 	}
@@ -26,8 +27,8 @@ func SuggestFlips(c *gin.Context) {
 	var flips []map[string]interface{}
 	for rows.Next() {
 		var itemID int
-		var smaBuy, smaSell float64
-		if err := rows.Scan(&itemID, &smaBuy, &smaSell); err != nil {
+		var smaBuy, smaSell, profitMargin float64
+		if err := rows.Scan(&itemID, &smaBuy, &smaSell, &profitMargin); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to parse data"})
 			return
 		}
@@ -35,7 +36,7 @@ func SuggestFlips(c *gin.Context) {
 			"item_id":   itemID,
 			"sma5_buy":  smaBuy,
 			"sma5_sell": smaSell,
-			"profit":    smaSell - smaBuy,
+			"profit":    profitMargin,
 		})
 	}
 
