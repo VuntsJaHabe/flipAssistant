@@ -20,15 +20,15 @@ func main() {
 		log.Printf("Warning: Could not load items data: %v", err)
 	}
 
-	// Get popular items to track (now much more comprehensive)
-	popularItems := database.GetPopularItems()
-	log.Printf("Tracking %d popular items for flip opportunities", len(popularItems))
+	// Get all tradeable items to track (comprehensive coverage)
+	tradeableItems := database.GetAllTradeableItems()
+	log.Printf("Tracking %d tradeable items for flip opportunities", len(tradeableItems))
 
 	// Fetch prices for all items in a single API call (API-friendly)
 	go func() {
 		for {
 			log.Println("Fetching prices for all tracked items...")
-			scripts.FetchAndStorePricesForAllItems(popularItems)
+			scripts.FetchAndStorePricesForAllItems(tradeableItems)
 
 			// Wait 10 minutes between batch updates to be respectful to the API
 			// This means we update all 141 items with just 1 API call every 10 minutes
