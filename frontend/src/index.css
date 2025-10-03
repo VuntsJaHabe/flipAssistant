@@ -3,40 +3,51 @@
 }
 
 :root {
-  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-  color: #3a3a3a;
+  /* AUTHENTIC OSRS Wiki Colors - extracted from the real CSS */
+  --body-main: #e2dbc8;
+  --body-light: #d8ccb4;
+  --body-mid: #d0bd97;
+  --body-dark: #b8a282;
+  --body-border: #94866d;
+  --body-background-color: #c0a886;
   
-  /* OSRS Wiki color palette */
-  --osrs-brown: #8B4513;
-  --osrs-dark-brown: #654321;
-  --osrs-light-brown: #CD853F;
-  --osrs-gold: #FFD700;
-  --osrs-dark-gold: #DAA520;
-  --osrs-cream: #FFF8DC;
-  --osrs-parchment: #F5DEB3;
-  --osrs-green: #228B22;
-  --osrs-red: #DC143C;
-  --osrs-blue: #4169E1;
-  --osrs-gray: #696969;
+  --text-color: #000;
+  --byline-color: #4c4c4c;
+  --subtle-color: #777;
+  --link-color: #936039;
+  --redlink-color: #ba0000;
+  --background-text-color: #444;
+  --background-link-color: #52351e;
   
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  /* Table colors */
+  --wikitable-header-bg: var(--body-dark);
+  --wikitable-border: var(--body-border);
+  --wikitable-bg: var(--body-light);
+  --wikitable-bg-lighter: #e9e3d6;
+  
+  /* Button colors */
+  --button-background: #605443;
+  --button-color: #fff;
+  --button-border: #3c352a;
+  
+  /* Price colors */
+  --coins-color: green;
+  --coins-pos-color: #014cc0;
+  --coins-neg-color: #c02614;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-  margin: 0;
-  padding: 0;
-  min-height: 100vh;
-  width: 100%;
-  background: 
-    radial-gradient(circle at 20% 80%, rgba(139, 69, 19, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
-    linear-gradient(135deg, #FFF8DC 0%, #F5DEB3 50%, #DEB887 100%);
-  background-attachment: fixed;
+  font-family: 'IBM Plex Sans', 'Helvetica Neue', 'Arial', sans-serif;
+  font-size: 0.9em;
+  background: linear-gradient(45deg, var(--body-background-color) 0%, var(--body-mid) 50%, var(--body-background-color) 100%);
+  color: var(--text-color);
+  line-height: 1.4;
 }
 
 #root {
@@ -44,47 +55,23 @@ body {
   min-height: 100vh;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  margin: 0;
-  line-height: 1.2;
-}
-
 button {
-  border-radius: 4px;
-  border: 2px solid var(--osrs-dark-brown);
-  padding: 0.5rem 1rem;
-  font-size: 0.9rem;
-  font-weight: bold;
-  font-family: inherit;
-  background: linear-gradient(to bottom, var(--osrs-gold) 0%, var(--osrs-dark-gold) 100%);
-  color: var(--osrs-dark-brown);
+  background: var(--button-background);
+  color: var(--button-color);
+  border: 1px solid var(--button-border);
+  padding: 8px 16px;
+  font-size: 13px;
   cursor: pointer;
-  transition: all 0.2s ease;
-  text-shadow: 1px 1px 0px rgba(255,255,255,0.5);
-  box-shadow: 
-    inset 1px 1px 0px rgba(255,255,255,0.8),
-    inset -1px -1px 0px rgba(0,0,0,0.3),
-    2px 2px 4px rgba(0,0,0,0.2);
+  font-family: inherit;
+  transition: background-color 0.2s;
+  border-radius: 3px;
 }
 
 button:hover {
-  background: linear-gradient(to bottom, #FFE55C 0%, #FFD700 100%);
-  transform: translateY(-1px);
-  box-shadow: 
-    inset 1px 1px 0px rgba(255,255,255,0.9),
-    inset -1px -1px 0px rgba(0,0,0,0.3),
-    3px 3px 6px rgba(0,0,0,0.3);
+  background: #7e6e58;
 }
 
-button:active {
-  transform: translateY(1px);
-  box-shadow: 
-    inset 1px 1px 2px rgba(0,0,0,0.3),
-    1px 1px 2px rgba(0,0,0,0.2);
-}
-
-button:focus,
-button:focus-visible {
-  outline: 2px solid var(--osrs-blue);
-  outline-offset: 2px;
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }

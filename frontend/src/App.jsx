@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import './App.css'
 import FlipSuggestions from './components/FlipSuggestions'
 import ItemHistory from './components/ItemHistory'
+import CategorizedFlips from './components/CategorizedFlips'
 import Header from './components/Header'
 
 const API_BASE_URL = 'http://localhost:8080'
@@ -19,7 +20,13 @@ function App() {
           className={activeTab === 'suggestions' ? 'tab active' : 'tab'}
           onClick={() => setActiveTab('suggestions')}
         >
-          Flip Suggestions
+          Quick Flips
+        </button>
+        <button 
+          className={activeTab === 'categories' ? 'tab active' : 'tab'}
+          onClick={() => setActiveTab('categories')}
+        >
+          Flip Categories
         </button>
         <button 
           className={activeTab === 'history' ? 'tab active' : 'tab'}
@@ -39,6 +46,8 @@ function App() {
             }}
           />
         )}
+        
+        {activeTab === 'categories' && <CategorizedFlips />}
         
         {activeTab === 'history' && (
           <ItemHistory 

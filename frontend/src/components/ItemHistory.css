@@ -1,212 +1,103 @@
 .item-history {
-  padding: 2rem;
-  max-width: 1400px;
-  margin: 0 auto;
-  width: 100%;
+  padding: 0;
 }
 
 .history-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
+  margin-bottom: 20px;
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: 16px;
+  background: var(--wikitable-header-bg);
+  border: 1px solid var(--wikitable-border);
+  padding: 12px 16px;
 }
 
 .history-header h2 {
-  color: #333;
+  color: var(--text-color);
   margin: 0;
+  font-size: 1.2em;
+  font-weight: bold;
 }
 
 .item-input-form {
   display: flex;
-  gap: 0.5rem;
+  gap: 8px;
   align-items: center;
 }
 
 .item-input {
-  padding: 0.5rem;
-  border: 2px solid var(--osrs-dark-brown);
-  border-radius: 4px;
-  font-size: 0.9rem;
+  padding: 6px 8px;
+  border: 1px solid var(--body-border);
+  font-size: 13px;
   width: 150px;
-  background: var(--osrs-cream);
-  color: var(--osrs-dark-brown);
-  font-weight: 500;
-  box-shadow: 
-    inset 1px 1px 2px rgba(0,0,0,0.1);
+  background: white;
+  color: var(--text-color);
+  font-family: inherit;
 }
 
 .item-input:focus {
   outline: none;
-  border-color: var(--osrs-gold);
-  background: #FFFACD;
-  box-shadow: 
-    inset 1px 1px 2px rgba(0,0,0,0.1),
-    0 0 4px rgba(255,215,0,0.3);
+  border-color: var(--link-color);
+  box-shadow: inset 0 0 0 1px var(--link-color);
 }
 
 .fetch-btn {
-  background: #667eea;
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
+  background: var(--button-background);
+  color: var(--button-color);
+  border: 1px solid var(--button-border);
+  padding: 6px 12px;
+  font-size: 13px;
   cursor: pointer;
-  font-size: 0.9rem;
-  transition: background-color 0.3s;
+  font-family: inherit;
 }
 
 .fetch-btn:hover {
-  background: #5a67d8;
+  background: #7e6e58;
 }
 
 .current-item {
-  background: 
-    linear-gradient(to right, var(--osrs-parchment) 0%, var(--osrs-cream) 100%);
-  border: 2px solid var(--osrs-dark-brown);
-  padding: 1rem;
-  border-radius: 8px;
-  border-left: 6px solid var(--osrs-gold);
-  margin-bottom: 2rem;
-  box-shadow: 
-    inset 1px 1px 0px rgba(255,255,255,0.8),
-    2px 2px 4px rgba(0,0,0,0.1);
+  background: var(--wikitable-bg);
+  border: 1px solid var(--wikitable-border);
+  padding: 12px;
+  margin-bottom: 20px;
+  border-left: 3px solid var(--link-color);
 }
 
 .current-item h3 {
-  margin: 0 0 0.25rem 0;
-  color: var(--osrs-dark-brown);
-  text-shadow: 1px 1px 0px rgba(255,255,255,0.8);
+  margin: 0 0 4px 0;
+  color: var(--link-color);
   font-weight: bold;
+  font-size: 1.1em;
 }
 
 .current-item p {
   margin: 0;
-  color: var(--osrs-gray);
+  color: var(--subtle-color);
   font-size: 0.9rem;
   font-style: italic;
 }
 
 .loading, .error, .no-data, .no-item {
   text-align: center;
-  padding: 3rem;
-  color: #666;
+  padding: 32px;
+  color: var(--text-color);
+  background: var(--wikitable-bg);
+  border: 1px solid var(--wikitable-border);
+  margin: 20px 0;
 }
 
-.spinner {
-  border: 3px solid #f3f3f3;
-  border-top: 3px solid #667eea;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  animation: spin 1s linear infinite;
-  margin: 0 auto 1rem;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+.error {
+  color: var(--redlink-color);
 }
 
 .chart-container {
-  background: 
-    linear-gradient(135deg, var(--osrs-cream) 0%, var(--osrs-parchment) 100%);
-  border: 3px solid var(--osrs-dark-brown);
-  border-radius: 8px;
-  padding: 1.5rem;
-  box-shadow: 
-    inset 1px 1px 0px rgba(255,255,255,0.9),
-    inset -2px -2px 0px rgba(0,0,0,0.2),
-    4px 4px 8px rgba(0,0,0,0.2);
-  margin-bottom: 2rem;
-  width: 100%;
-  position: relative;
-  overflow: hidden;
-}
-
-.chart-container::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: 
-    url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23CD853F' fill-opacity='0.02' fill-rule='evenodd'%3E%3Cpath d='m0 40l40-40h-40v40zm40 0v-40h-40l40 40z'/%3E%3C/g%3E%3C/svg%3E");
-  pointer-events: none;
-}
-
-.chart-container > * {
-  position: relative;
-  z-index: 1;
-}
-
-@media (min-width: 1200px) {
-  .chart-container {
-    padding: 2rem;
-  }
-}
-
-.history-stats {
-  margin-top: 2rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid #e2e8f0;
-}
-
-.history-stats h4 {
-  margin: 0 0 1rem 0;
-  color: #2d3748;
-}
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
-}
-
-.stat-item {
-  background: 
-    linear-gradient(135deg, var(--osrs-cream) 0%, var(--osrs-parchment) 100%);
-  padding: 1rem;
-  border-radius: 6px;
-  border: 2px solid var(--osrs-light-brown);
-  box-shadow: 
-    inset 1px 1px 0px rgba(255,255,255,0.8),
-    2px 2px 4px rgba(0,0,0,0.1);
-}
-
-.stat-date {
-  font-weight: 600;
-  color: #4a5568;
-  font-size: 0.9rem;
-  margin-bottom: 0.5rem;
-}
-
-.stat-prices {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.buy-stat {
-  color: var(--osrs-red);
-  font-size: 0.85rem;
-  font-weight: 500;
-}
-
-.sell-stat {
-  color: var(--osrs-green);
-  font-size: 0.85rem;
-  font-weight: 500;
-}
-
-.profit-stat {
-  color: var(--osrs-dark-brown);
-  font-weight: bold;
-  font-size: 0.9rem;
-  text-shadow: 1px 1px 0px rgba(255,255,255,0.8);
+  background: var(--wikitable-bg);
+  border: 1px solid var(--wikitable-border);
+  padding: 16px;
+  margin-bottom: 20px;
+  box-shadow: 0 0.25rem 0.35rem -0.25rem rgba(0, 0, 0, 0.1);
 }
 
 @media (max-width: 768px) {
@@ -217,9 +108,5 @@
   
   .item-input-form {
     justify-content: center;
-  }
-  
-  .stats-grid {
-    grid-template-columns: 1fr;
   }
 }

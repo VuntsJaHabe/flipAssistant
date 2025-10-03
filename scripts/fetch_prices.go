@@ -5,7 +5,6 @@ import (
 	"flipAssistant/database"
 	"fmt"
 	"log"
-	"time"
 
 	"github.com/go-resty/resty/v2"
 )
@@ -23,7 +22,7 @@ func FetchAndStorePricesForAllItems(itemIDs []int) {
 	client := resty.New()
 
 	// Set proper User-Agent to be respectful to the API (as required by OSRS Wiki)
-	client.SetHeader("User-Agent", "FlipAssistant/1.0 - OSRS GE Flip Analysis Tool - Contact: github.com/user/flipAssistant")
+	client.SetHeader("User-Agent", "FlipAssistant/1.0 - OSRS GE Flip Analysis Tool - Contact: github.com/VuntsJaHabe/flipAssistant")
 
 	resp, err := client.R().Get("https://prices.runescape.wiki/api/v1/osrs/latest")
 	if err != nil {
@@ -104,11 +103,4 @@ func Fetch5MinuteAverages(itemIDs []int) {
 // Legacy function for single item (now deprecated, but kept for compatibility)
 func FetchAndStorePrices(itemID int) {
 	FetchAndStorePricesForAllItems([]int{itemID})
-}
-
-func main() {
-	for {
-		FetchAndStorePrices(11840) // Example item ID
-		time.Sleep(10 * time.Minute)
-	}
 }

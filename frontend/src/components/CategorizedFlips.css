@@ -1,0 +1,193 @@
+.categorized-flips {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--spacing-md);
+  background: var(--color-content-background);
+  border: 1px solid var(--color-border);
+  border-radius: 3px;
+}
+
+.category-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+  margin-bottom: var(--spacing-md);
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: var(--spacing-sm);
+}
+
+.tab {
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  color: var(--color-link);
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-family: var(--font-family);
+  font-size: var(--font-size-small);
+  cursor: pointer;
+  border-radius: 3px 3px 0 0;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  transition: all 0.2s ease;
+}
+
+.tab:hover {
+  background: var(--color-background-secondary);
+  color: var(--color-link-hover);
+}
+
+.tab.active {
+  background: var(--color-content-background);
+  border-bottom: 1px solid var(--color-content-background);
+  color: var(--color-text-primary);
+  font-weight: bold;
+  margin-bottom: -1px;
+}
+
+.item-count {
+  background: var(--color-background-secondary);
+  color: var(--color-text-secondary);
+  padding: 2px 6px;
+  border-radius: 2px;
+  font-size: var(--font-size-tiny);
+  font-weight: normal;
+}
+
+.tab.active .item-count {
+  background: var(--color-accent-primary);
+  color: white;
+}
+
+.category-content {
+  padding: var(--spacing-md) 0;
+}
+
+.category-header h3 {
+  color: var(--color-text-primary);
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-large);
+  margin: 0 0 var(--spacing-sm) 0;
+}
+
+.category-description {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-small);
+  margin-bottom: var(--spacing-md);
+  font-style: italic;
+}
+
+.flips-table {
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: 3px;
+}
+
+.table-header {
+  display: grid;
+  grid-template-columns: 100px 120px 120px 120px 1fr;
+  background: var(--color-background-secondary);
+  border-bottom: 1px solid var(--color-border);
+  font-weight: bold;
+  color: var(--color-text-primary);
+  font-family: var(--font-family);
+  font-size: var(--font-size-small);
+}
+
+.table-header div,
+.table-row div {
+  padding: var(--spacing-sm);
+  border-right: 1px solid var(--color-border);
+}
+
+.table-header div:last-child,
+.table-row div:last-child {
+  border-right: none;
+}
+
+.table-row {
+  display: grid;
+  grid-template-columns: 100px 120px 120px 120px 1fr;
+  border-bottom: 1px solid var(--color-border);
+  transition: background-color 0.2s ease;
+}
+
+.table-row:hover {
+  background: var(--color-background-secondary);
+}
+
+.table-row:last-child {
+  border-bottom: none;
+}
+
+.item-id {
+  font-family: var(--font-family-monospace);
+  color: var(--color-text-secondary);
+}
+
+.buy-price,
+.sell-price,
+.profit,
+.margin-percentage {
+  font-family: var(--font-family-monospace);
+  text-align: right;
+  color: var(--color-text-primary);
+}
+
+.profit {
+  color: var(--color-success);
+  font-weight: bold;
+}
+
+.margin-percentage {
+  color: var(--color-accent-primary);
+  font-weight: bold;
+}
+
+.no-items {
+  padding: var(--spacing-lg);
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+
+.loading,
+.error {
+  text-align: center;
+  padding: var(--spacing-lg);
+  color: var(--color-text-secondary);
+}
+
+.error {
+  color: var(--color-error);
+  background: #fff2f2;
+  border: 1px solid var(--color-error);
+  border-radius: 3px;
+  margin: var(--spacing-md) 0;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .category-tabs {
+    flex-direction: column;
+  }
+  
+  .tab {
+    border-radius: 3px;
+    justify-content: space-between;
+  }
+  
+  .flips-table {
+    overflow-x: auto;
+  }
+  
+  .table-header,
+  .table-row {
+    min-width: 500px;
+  }
+}
+
+/* Special styling for High Margin Items table with 5 columns */
+.categorized-flips .table-header.five-columns,
+.categorized-flips .table-row.five-columns {
+  grid-template-columns: 100px 120px 120px 120px 100px;
+}

@@ -45,6 +45,7 @@ func main() {
 	// Define API routes
 	r.GET("/item-history/:id", routes.GetItemHistory)
 	r.GET("/suggest-flips", routes.SuggestFlips)
+	r.GET("/categorized-flips", routes.GetCategorizedFlips)
 	r.GET("/item-info/:id", routes.GetItemInfo)
 	r.GET("/tracked-items", routes.GetAllTrackedItems)
 

@@ -1,88 +1,226 @@
-.App {
+.app {
+  background: transparent; /* Let the body background show through */
   min-height: 100vh;
-  width: 100%;
+  font-family: 'IBM Plex Sans', 'Helvetica Neue', 'Arial', sans-serif;
+  color: var(--text-color);
 }
 
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: var(--body-main);
+  color: var(--text-color);
+  border-color: transparent;
+  box-shadow: 0 0 7px rgba(0, 0, 0, 0.15);
+  margin-top: 0;
+}
+
+.header {
+  background: var(--body-dark);
+  color: var(--text-color);
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 1.4em;
+  font-weight: bold;
+  font-family: 'PT Serif', 'Palatino', 'Georgia', serif;
+  border-bottom: 2px solid var(--body-border);
+}
+
+/* Authentic OSRS Wiki Tab Navigation */
 .nav-tabs {
   display: flex;
-  justify-content: center;
-  background: 
-    linear-gradient(to bottom, var(--osrs-light-brown) 0%, var(--osrs-brown) 100%);
-  border-top: 3px solid var(--osrs-gold);
-  border-bottom: 3px solid var(--osrs-dark-brown);
-  box-shadow: 
-    inset 0 2px 4px rgba(255,255,255,0.3),
-    0 4px 8px rgba(0, 0, 0, 0.3);
+  margin: 0 0 20px 0;
   padding: 0;
-  width: 100%;
+  border-bottom: 1px solid var(--body-border);
+  background: none;
 }
 
-.tab {
-  background: linear-gradient(to bottom, var(--osrs-parchment) 0%, var(--osrs-cream) 100%);
-  border: 2px solid var(--osrs-dark-brown);
+.nav-tab {
+  background: var(--body-background-color);
+  border: 1px solid var(--body-border);
   border-bottom: none;
-  margin: 0.25rem 0.25rem 0 0.25rem;
-  padding: 0.75rem 1.5rem;
+  padding: 8px 16px;
   cursor: pointer;
-  font-size: 1rem;
-  font-weight: bold;
-  color: var(--osrs-dark-brown);
-  border-radius: 8px 8px 0 0;
-  transition: all 0.2s ease;
-  text-shadow: 1px 1px 0px rgba(255,255,255,0.8);
-  box-shadow: 
-    inset 1px 1px 0px rgba(255,255,255,0.8),
-    inset -1px -1px 0px rgba(0,0,0,0.2);
+  font-size: 13px;
+  color: var(--background-link-color);
+  margin-right: 2px;
   position: relative;
-  top: 2px;
+  top: 1px;
+  box-shadow: inset 0 -7px 7px -7px rgba(0, 0, 0, 0.15);
+  transition: background-color 0.2s;
 }
 
-.tab:hover {
-  background: linear-gradient(to bottom, #FFFACD 0%, var(--osrs-parchment) 100%);
-  transform: translateY(-2px);
-  top: 0px;
+.nav-tab:hover {
+  background: var(--body-mid);
 }
 
-.tab.active {
-  background: linear-gradient(to bottom, var(--osrs-gold) 0%, var(--osrs-dark-gold) 100%);
-  color: var(--osrs-dark-brown);
-  transform: translateY(-2px);
-  top: 0px;
-  border-color: var(--osrs-dark-brown);
-  box-shadow: 
-    inset 1px 1px 0px rgba(255,255,255,0.9),
-    inset -1px -1px 0px rgba(0,0,0,0.3),
-    0 4px 8px rgba(0,0,0,0.2);
+.nav-tab.active {
+  background: var(--body-main);
+  color: var(--text-color);
+  border-bottom: 1px solid var(--body-main);
+  box-shadow: none;
 }
 
-.main-content {
-  min-height: calc(100vh - 200px);
+.content {
+  padding: 0;
+  background: transparent;
+}
+
+/* Authentic OSRS Wiki Table Styling */
+.items-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.item-card {
+  background: var(--wikitable-bg);
+  border: 1px solid var(--wikitable-border);
+  padding: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  box-shadow: 0 0.25rem 0.35rem -0.25rem rgba(0, 0, 0, 0.1);
+}
+
+.item-card:hover {
+  background: var(--wikitable-bg-lighter);
+}
+
+.item-rank {
+  background: var(--wikitable-header-bg);
+  color: var(--text-color);
+  padding: 3px 8px;
+  font-size: 11px;
+  font-weight: bold;
+  display: inline-block;
+  margin-bottom: 8px;
+  border: 1px solid var(--wikitable-border);
+}
+
+.item-name {
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: var(--link-color);
+  font-family: inherit;
+}
+
+.price-info {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-color);
+}
+
+.buy-price {
+  color: var(--coins-neg-color);
+  font-weight: bold;
+}
+
+.sell-price {
+  color: var(--coins-pos-color);
+  font-weight: bold;
+}
+
+.profit-margin {
+  font-weight: bold;
+  color: var(--coins-color);
+}
+
+/* Authentic OSRS Wiki Chart Container */
+.chart-container {
+  background: var(--wikitable-bg);
+  border: 1px solid var(--wikitable-border);
+  padding: 16px;
+  margin-top: 20px;
+  box-shadow: 0 0.25rem 0.35rem -0.25rem rgba(0, 0, 0, 0.1);
+}
+
+/* OSRS Wiki Style Input */
+.search-input {
   width: 100%;
-  padding: 1rem;
-  background: 
-    url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23CD853F' fill-opacity='0.03' fill-rule='evenodd'%3E%3Cpath d='m0 40l40-40h-40v40zm40 0v-40h-40l40 40z'/%3E%3C/g%3E%3C/svg%3E"),
-    linear-gradient(to bottom, transparent 0%, rgba(139, 69, 19, 0.05) 100%);
+  padding: 7px 8px;
+  border: 1px solid var(--body-border);
+  font-size: 13px;
+  margin-bottom: 16px;
+  background: #fff;
+  color: var(--text-color);
+  font-family: inherit;
+  height: 2.5rem;
+  box-shadow: inset 0 -7px 7px -7px rgba(0, 0, 0, 0.15);
 }
 
-@media (min-width: 768px) {
-  .main-content {
-    padding: 2rem;
-  }
+.search-input:focus {
+  border-color: var(--link-color);
+  outline: none;
+  box-shadow: inset 0 0 0 1px var(--link-color);
 }
 
+.search-input::placeholder {
+  color: var(--subtle-color);
+  opacity: 1;
+}
+
+/* Loading and Error States */
+.loading, .error {
+  text-align: center;
+  padding: 32px;
+  font-size: 14px;
+  color: var(--text-color);
+}
+
+.error {
+  color: var(--redlink-color);
+  background: var(--wikitable-bg);
+  border: 1px solid var(--wikitable-border);
+  margin: 20px 0;
+}
+
+/* OSRS Wiki Button Styling */
+button {
+  background: var(--button-background);
+  color: var(--button-color);
+  border: 1px solid var(--button-border);
+  padding: 8px 16px;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background-color 0.2s;
+}
+
+button:hover {
+  background: #7e6e58; /* Slightly lighter button color */
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
+  .items-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 12px;
+  }
+  
+  .container {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .items-grid {
+    grid-template-columns: 1fr;
+  }
+  
   .nav-tabs {
-    flex-direction: column;
+    flex-wrap: wrap;
   }
   
-  .tab {
-    text-align: center;
-    border-bottom: 1px solid #e2e8f0;
-    border-right: none;
-  }
-  
-  .tab.active {
-    border-bottom-color: #667eea;
-    border-right-color: transparent;
+  .nav-tab {
+    margin-bottom: 2px;
   }
 }
