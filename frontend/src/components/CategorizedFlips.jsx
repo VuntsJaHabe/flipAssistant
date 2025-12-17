@@ -70,7 +70,7 @@ const CategorizedFlips = () => {
 
           <div className="flips-table">
             <div className={`table-header ${categories[activeTab].name === 'High Margin Items' ? 'five-columns' : ''}`}>
-              <div>Item ID</div>
+              <div>Item Name</div>
               <div>Buy Price</div>
               <div>Sell Price</div>
               <div>Profit</div>
@@ -82,7 +82,7 @@ const CategorizedFlips = () => {
             ) : (
               categories[activeTab].items.map((flip, index) => (
                 <div key={index} className={`table-row ${categories[activeTab].name === 'High Margin Items' ? 'five-columns' : ''}`}>
-                  <div className="item-id">{flip.item_id}</div>
+                  <div className="item-id">{flip.item_name}</div>
                   <div className="buy-price">{formatPrice(Math.round(flip.sma5_buy))}</div>
                   <div className="sell-price">{formatPrice(Math.round(flip.sma5_sell))}</div>
                   <div className="profit">{formatPrice(Math.round(flip.profit))}</div>

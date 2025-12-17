@@ -40,3 +40,23 @@ func GetAllTrackedItems(c *gin.Context) {
 		"count": len(items),
 	})
 }
+
+// SearchItemByName searches for an item by name and returns its ID
+func SearchItemByName(c *gin.Context) {
+	itemName := c.Query("name")
+	if itemName == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Item name is required"})
+		return
+	}
+
+	itemID := database.GetItemIDByName(itemName)
+	if itemID == -1 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Item not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"id":   itemID,
+		"name": database.GetItemName(itemID),
+	})
+}

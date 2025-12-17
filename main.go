@@ -48,6 +48,7 @@ func main() {
 	r.GET("/categorized-flips", routes.GetCategorizedFlips)
 	r.GET("/item-info/:id", routes.GetItemInfo)
 	r.GET("/tracked-items", routes.GetAllTrackedItems)
+	r.GET("/search-item", routes.SearchItemByName)
 
 	// Start server
 	log.Println("Server running on :8080")

@@ -178,7 +178,7 @@ func getFlipsByConsistency() []map[string]interface{} {
 	return processFlipRows(rows)
 }
 
-// processFlipRows processes SQL rows into flip data
+// processFlipRows processes SQL rows into flip data with item names
 func processFlipRows(rows *sql.Rows) []map[string]interface{} {
 	var flips []map[string]interface{}
 
@@ -188,11 +188,14 @@ func processFlipRows(rows *sql.Rows) []map[string]interface{} {
 		if err := rows.Scan(&itemID, &smaBuy, &smaSell, &profitMargin); err != nil {
 			continue
 		}
+		itemName := database.GetItemName(itemID)
 		flips = append(flips, map[string]interface{}{
-			"item_id":   itemID,
-			"sma5_buy":  smaBuy,
-			"sma5_sell": smaSell,
-			"profit":    profitMargin,
+			"item_id":     itemID,
+			"item_name":   itemName,
+			"sma5_buy":    smaBuy,
+			"sma5_sell":   smaSell,
+			"profit":      profitMargin,
+			"roi_percent": (profitMargin / smaBuy) * 100,
 		})
 	}
 	return flips
@@ -208,12 +211,15 @@ func processFlipRowsWithPercentage(rows *sql.Rows) []map[string]interface{} {
 		if err := rows.Scan(&itemID, &smaBuy, &smaSell, &profitMargin, &marginPercentage); err != nil {
 			continue
 		}
+		itemName := database.GetItemName(itemID)
 		flips = append(flips, map[string]interface{}{
 			"item_id":           itemID,
+			"item_name":         itemName,
 			"sma5_buy":          smaBuy,
 			"sma5_sell":         smaSell,
 			"profit":            profitMargin,
 			"margin_percentage": marginPercentage,
+			"roi_percent":       (profitMargin / smaBuy) * 100,
 		})
 	}
 	return flips

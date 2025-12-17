@@ -19,6 +19,29 @@ function ItemHistory({ apiUrl, itemId, onItemIdChange }) {
     }
   }
 
+  const searchItemByName = async (name) => {
+    try {
+      const response = await axios.get(`${apiUrl}/search-item`, {
+        params: { name }
+      })
+      return response.data.id
+    } catch (err) {
+      return null
+    }
+  }
+
+  const resolveItemInput = async (input) => {
+    // Try to parse as number first
+    const numInput = parseInt(input)
+    if (!isNaN(numInput) && numInput > 0) {
+      return numInput
+    }
+    
+    // Try to search by name
+    const itemId = await searchItemByName(input)
+    return itemId
+  }
+
   const fetchHistory = async (id) => {
     if (!id) return
     
@@ -57,11 +80,25 @@ function ItemHistory({ apiUrl, itemId, onItemIdChange }) {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    const id = parseInt(inputItemId)
-    if (id && id > 0) {
-      onItemIdChange(id)
-      fetchHistory(id)
+    
+    if (!inputItemId.trim()) {
+      setError('Please enter an item ID or name')
+      return
     }
+
+    const parseAndFetch = async () => {
+      const resolvedId = await resolveItemInput(inputItemId)
+      
+      if (!resolvedId) {
+        setError('Item not found. Please check the ID or name and try again.')
+        return
+      }
+
+      onItemIdChange(resolvedId)
+      fetchHistory(resolvedId)
+    }
+
+    parseAndFetch()
   }
 
   const formatPrice = (price) => {
@@ -82,8 +119,8 @@ function ItemHistory({ apiUrl, itemId, onItemIdChange }) {
         
         <form onSubmit={handleSubmit} className="item-input-form">
           <input
-            type="number"
-            placeholder="Enter Item ID"
+            type="text"
+            placeholder="Enter Item ID or Name (e.g., '560' or 'Cannonball')"
             value={inputItemId}
             onChange={(e) => setInputItemId(e.target.value)}
             className="item-input"

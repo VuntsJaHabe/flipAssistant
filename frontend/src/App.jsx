@@ -20,7 +20,7 @@ function App() {
           className={activeTab === 'suggestions' ? 'tab active' : 'tab'}
           onClick={() => setActiveTab('suggestions')}
         >
-          Quick Flips
+          Main Flip Suggestions
         </button>
         <button 
           className={activeTab === 'categories' ? 'tab active' : 'tab'}
