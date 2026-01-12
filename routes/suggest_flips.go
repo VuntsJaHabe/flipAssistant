@@ -14,6 +14,7 @@ func SuggestFlips(c *gin.Context) {
                (a.sma5_sell - a.sma5_buy) AS profit_margin
         FROM item_analytics a
         WHERE a.sma5_buy > 0 AND a.sma5_sell > 0
+        AND a.sma5_buy < 200000000 -- Exclude items over 200M to avoid low volume 3rd age items
         ORDER BY profit_margin DESC
         LIMIT 10;
     `)

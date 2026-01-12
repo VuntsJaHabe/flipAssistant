@@ -74,6 +74,8 @@ func GetPopularItems() []int {
 
 // GetItemIDByName searches for an item ID by its name (case-insensitive)
 // Returns -1 if not found
+// GetItemIDByName searches for an item by name and returns its ID
+// Returns -1 if not found
 func GetItemIDByName(name string) int {
 	if itemsCache == nil {
 		if err := LoadItemsData(); err != nil {
@@ -81,21 +83,52 @@ func GetItemIDByName(name string) int {
 		}
 	}
 
-	// Direct match first
-	for _, item := range itemsCache {
-		if item.Name == name {
-			return item.ID
-		}
-	}
+	var candidates []Item
 
-	// Case-insensitive match
+	// Collect all matches
 	for _, item := range itemsCache {
 		if lowercaseEqual(item.Name, name) {
-			return item.ID
+			candidates = append(candidates, item)
 		}
 	}
 
-	return -1
+	if len(candidates) == 0 {
+		return -1
+	}
+
+	// Filter and sort to find the best match
+	// Priority 1: Tradeable on GE
+	// Priority 2: Not incomplete
+	// Priority 3: Exact name match (case sensitive)
+	// Priority 4: Lowest ID (usually implies original item vs variants)
+
+	bestCandidate := candidates[0]
+	bestScore := calculateItemScore(bestCandidate, name)
+
+	for i := 1; i < len(candidates); i++ {
+		score := calculateItemScore(candidates[i], name)
+		// We want higher score, or if equal score, lower ID
+		if score > bestScore || (score == bestScore && candidates[i].ID < bestCandidate.ID) {
+			bestCandidate = candidates[i]
+			bestScore = score
+		}
+	}
+
+	return bestCandidate.ID
+}
+
+func calculateItemScore(item Item, searchName string) int {
+	score := 0
+	if item.TradeableGE {
+		score += 100
+	}
+	if !item.Incomplete {
+		score += 50
+	}
+	if item.Name == searchName {
+		score += 25
+	}
+	return score
 }
 
 // lowercaseEqual compares two strings case-insensitively

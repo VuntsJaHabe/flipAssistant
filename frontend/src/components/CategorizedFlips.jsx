@@ -68,27 +68,46 @@ const CategorizedFlips = () => {
             <p className="category-description">{categories[activeTab].description}</p>
           </div>
 
-          <div className="flips-table">
-            <div className={`table-header ${categories[activeTab].name === 'High Margin Items' ? 'five-columns' : ''}`}>
-              <div>Item Name</div>
-              <div>Buy Price</div>
-              <div>Sell Price</div>
-              <div>Profit</div>
-              {categories[activeTab].name === 'High Margin Items' && <div>Margin %</div>}
-            </div>
-            
+          <div className="flips-grid">
             {categories[activeTab].items.length === 0 ? (
               <div className="no-items">No items found in this category</div>
             ) : (
               categories[activeTab].items.map((flip, index) => (
-                <div key={index} className={`table-row ${categories[activeTab].name === 'High Margin Items' ? 'five-columns' : ''}`}>
-                  <div className="item-id">{flip.item_name}</div>
-                  <div className="buy-price">{formatPrice(Math.round(flip.sma5_buy))}</div>
-                  <div className="sell-price">{formatPrice(Math.round(flip.sma5_sell))}</div>
-                  <div className="profit">{formatPrice(Math.round(flip.profit))}</div>
-                  {categories[activeTab].name === 'High Margin Items' && (
-                    <div className="margin-percentage">{formatMarginPercentage(flip.margin_percentage)}</div>
-                  )}
+                <div key={index} className="flip-card">
+                  <div className="flip-card-header">
+                    <img
+                      src={`https://services.runescape.com/m=itemdb_oldschool/obj_sprite.gif?id=${flip.item_id}`}
+                      alt={flip.item_name}
+                      className="item-icon"
+                      onError={(e) => { e.target.style.display = 'none' }}
+                    />
+                    <div className="item-name">{flip.item_name}</div>
+                  </div>
+
+                  <div className="flip-card-stats">
+                    <div className="stat-row">
+                      <span className="stat-label">Buy:</span>
+                      <span className="stat-value buy-price">{formatPrice(Math.round(flip.sma5_buy))}</span>
+                    </div>
+                    <div className="stat-row">
+                      <span className="stat-label">Sell:</span>
+                      <span className="stat-value sell-price">{formatPrice(Math.round(flip.sma5_sell))}</span>
+                    </div>
+                    <div className="stat-row highlight">
+                      <span className="stat-label">Profit:</span>
+                      <span className="stat-value profit">{formatPrice(Math.round(flip.profit))}</span>
+                    </div>
+                    {categories[activeTab].name === 'High Margin Items' && (
+                      <div className="stat-row">
+                        <span className="stat-label">Margin:</span>
+                        <span className="stat-value margin">{formatMarginPercentage(flip.margin_percentage)}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flip-card-actions">
+                    <button className="view-btn">View History</button>
+                  </div>
                 </div>
               ))
             )}

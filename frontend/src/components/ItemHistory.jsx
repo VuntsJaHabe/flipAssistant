@@ -36,7 +36,7 @@ function ItemHistory({ apiUrl, itemId, onItemIdChange }) {
     if (!isNaN(numInput) && numInput > 0) {
       return numInput
     }
-    
+
     // Try to search by name
     const itemId = await searchItemByName(input)
     return itemId
@@ -44,23 +44,23 @@ function ItemHistory({ apiUrl, itemId, onItemIdChange }) {
 
   const fetchHistory = async (id) => {
     if (!id) return
-    
+
     try {
       setLoading(true)
-      
+
       // Fetch both history and item name
       const [historyResponse] = await Promise.all([
         axios.get(`${apiUrl}/item-history/${id}`),
         fetchItemName(id)
       ])
-      
+
       // Process data for the chart
       const processedData = historyResponse.data.history.map((item, index) => ({
         ...item,
         index: index + 1,
         timestamp: new Date(item.timestamp).toLocaleDateString()
       })).reverse() // Reverse to show oldest to newest
-      
+
       setHistory(processedData)
       setError(null)
     } catch (err) {
@@ -80,7 +80,7 @@ function ItemHistory({ apiUrl, itemId, onItemIdChange }) {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    
+
     if (!inputItemId.trim()) {
       setError('Please enter an item ID or name')
       return
@@ -88,7 +88,7 @@ function ItemHistory({ apiUrl, itemId, onItemIdChange }) {
 
     const parseAndFetch = async () => {
       const resolvedId = await resolveItemInput(inputItemId)
-      
+
       if (!resolvedId) {
         setError('Item not found. Please check the ID or name and try again.')
         return
@@ -116,7 +116,7 @@ function ItemHistory({ apiUrl, itemId, onItemIdChange }) {
     <div className="item-history">
       <div className="history-header">
         <h2>📈 Item Price History</h2>
-        
+
         <form onSubmit={handleSubmit} className="item-input-form">
           <input
             type="text"
@@ -157,37 +157,73 @@ function ItemHistory({ apiUrl, itemId, onItemIdChange }) {
 
       {!loading && !error && history.length > 0 && (
         <div className="chart-container">
-          <ResponsiveContainer width="100%" height={500}>
-            <LineChart data={history}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis 
-                dataKey="timestamp" 
-                angle={-45}
-                textAnchor="end"
-                height={80}
-              />
-              <YAxis tickFormatter={formatPrice} />
-              <Tooltip 
-                formatter={(value) => [formatPrice(value), '']}
-                labelFormatter={(label) => `Date: ${label}`}
-              />
-              <Legend />
-              <Line 
-                type="monotone" 
-                dataKey="buy_price" 
-                stroke="#e53e3e" 
-                name="Buy Price"
-                strokeWidth={2}
-              />
-              <Line 
-                type="monotone" 
-                dataKey="sell_price" 
-                stroke="#38a169" 
-                name="Sell Price"
-                strokeWidth={2}
-              />
-            </LineChart>
-          </ResponsiveContainer>
+          <div className="chart-section main-chart">
+            <h3>Price Action</h3>
+            <ResponsiveContainer width="100%" height={400}>
+              <LineChart data={history}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis
+                  dataKey="timestamp"
+                  angle={-45}
+                  textAnchor="end"
+                  height={80}
+                  tick={{ fontSize: 12 }}
+                />
+                <YAxis tickFormatter={formatPrice} domain={['auto', 'auto']} />
+                <Tooltip
+                  formatter={(value) => [formatPrice(value), '']}
+                  labelFormatter={(label) => `Date: ${label}`}
+                  contentStyle={{ backgroundColor: '#2d3748', border: 'none', color: '#fff' }}
+                />
+                <Legend verticalAlign="top" />
+                <Line
+                  type="monotone"
+                  dataKey="buy_price"
+                  stroke="#ef4444"
+                  name="Buy Price"
+                  strokeWidth={2}
+                  dot={false}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="sell_price"
+                  stroke="#48bb78"
+                  name="Sell Price"
+                  strokeWidth={2}
+                  dot={false}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+
+          <div className="chart-section technical-chart">
+            <h3>RSI (14)</h3>
+            <ResponsiveContainer width="100%" height={200}>
+              <LineChart data={history}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="timestamp" hide />
+                <YAxis domain={[0, 100]} ticks={[30, 50, 70]} />
+                <Tooltip labelFormatter={(label) => `Date: ${label}`} />
+                {/* Reference Lines for Overbought/Oversold */}
+                <Line type="monotone" dataKey="rsi" stroke="#8884d8" dot={false} strokeWidth={2} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+
+          <div className="chart-section technical-chart">
+            <h3>MACD (12, 26, 9)</h3>
+            <ResponsiveContainer width="100%" height={200}>
+              <LineChart data={history}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="timestamp" hide />
+                <YAxis />
+                <Tooltip labelFormatter={(label) => `Date: ${label}`} />
+                <Legend verticalAlign="top" height={36} />
+                <Line type="monotone" dataKey="macd_line" stroke="#3182ce" name="MACD" dot={false} strokeWidth={2} />
+                <Line type="monotone" dataKey="macd_signal" stroke="#ed8936" name="Signal" dot={false} strokeWidth={2} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
 
           <div className="history-stats">
             <h4>Recent Stats</h4>
@@ -201,6 +237,9 @@ function ItemHistory({ apiUrl, itemId, onItemIdChange }) {
                     <span className="profit-stat">
                       Profit: {formatPrice(item.sell_price - item.buy_price)}
                     </span>
+                  </div>
+                  <div className="stat-technical">
+                    <span className="rsi-stat">RSI: {item.rsi?.toFixed(1)}</span>
                   </div>
                 </div>
               ))}
