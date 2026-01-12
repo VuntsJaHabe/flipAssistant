@@ -1,38 +1,40 @@
-# 🔄 FlipAssistant
+# FlipAssistant
 
-AI-Powered OSRS Grand Exchange Flip Analyzer
+### AI-Powered OSRS Grand Exchange Flip Analyzer
 
-FlipAssistant is a sophisticated tool designed to help Old School RuneScape (OSRS) players identify profitable Grand Exchange flipping opportunities. It automatically tracks item prices, calculates moving averages, and suggests the best items to flip based on historical data and profit margins.
+FlipAssistant is a tool designed to help Old School RuneScape (OSRS) players identify profitable Grand Exchange flipping opportunities. It automatically tracks item prices, calculates technical indicators, and suggests the best items to flip based on historical data and profit margins.
 
-## ✨ Features
+## Features
 
-- **Real-time Price Tracking**: Automatically fetches and stores Grand Exchange prices from the OSRS Wiki API
-- **Smart Analytics**: Calculates 5-period Simple Moving Averages (SMA5) for buy and sell prices
-- **Flip Suggestions**: AI-powered recommendations for the most profitable items to flip
-- **Interactive Charts**: Visual price history with trend analysis using Recharts
-- **Modern UI**: Clean, responsive React interface with real-time updates
-- **RESTful API**: Go backend with Gin framework for fast, reliable data serving
+- **Real-time Price Tracking**: Automatically fetches and stores Grand Exchange prices from the OSRS Wiki API.
+- **Advanced Technical Analysis**:
+  - **RSI (Relative Strength Index)**: Identification of overbought/oversold conditions.
+  - **MACD (Moving Average Convergence Divergence)**: Trend-following momentum indicator.
+  - **SMA (Simple Moving Average)**: 5-period moving averages for calculating reliable margins.
+- **Categorized Flip Suggestions**: curated lists of items based on capital requirements and strategy (High Margin, High Volume, etc.).
+- **Interactive Visualizations**:
+  - Price history charts with overlayed technical indicators.
+  - Responsive card-grid layout for browsing items.
+- **Search & History**: Robust search functionality with relevance sorting and detailed price history view.
+- **Performant Backend**: Go backend with SQLite database for fast data processing and minimal resource usage.
 
-## 🏗️ Architecture
+## Architecture
 
 ### Backend (Go)
 - **Framework**: Gin (HTTP router)
-- **Database**: SQLite (lightweight, file-based)
-- **Price Source**: OSRS Wiki API
-- **Features**: CORS support, automatic price fetching, moving averages
+- **Database**: SQLite
+- **Analysis**: Custom Go implementations of financial indicators (RSI, MACD)
 
 ### Frontend (React + Vite)
-- **Framework**: React 18 with Vite
-- **Styling**: Custom CSS with responsive design
-- **Charts**: Recharts for interactive price visualizations
-- **HTTP Client**: Axios for API communication
+- **Framework**: React 18
+- **Visualization**: Recharts
+- **Styling**: Custom CSS with responsive grid layouts
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
-- Go 1.23+ 
-- Node.js 22+ (use nvm for easy version management)
-- Git
+- Go 1.23+
+- Node.js 22+
 
 ### Installation
 
@@ -42,145 +44,32 @@ FlipAssistant is a sophisticated tool designed to help Old School RuneScape (OSR
    cd flipAssistant
    ```
 
-2. **Install backend dependencies**
+2. **Run the development environment**
    ```bash
-   go mod tidy
+   make dev
    ```
+   This command starts both the backend server (port 8080) and the frontend server (port 5173).
 
-3. **Install frontend dependencies**
-   ```bash
-   make install
-   # or manually: cd frontend && npm install
-   ```
+## API Endpoints
 
-### Development
+- `GET /suggest-flips` - Returns top flip opportunities ranked by profit margin.
+- `GET /categorized-flips` - Returns items organized by category (Budget, High Value, etc.).
+- `GET /item-history/:id` - Returns comprehensive price history with pre-calculated RSI and MACD values.
+- `GET /item-info/:id` - Returns basic item details.
+- `GET /search-item` - Search for items by name with fuzzy matching.
 
-**Easy way using the server script:**
-```bash
-# Start both servers
-./server.sh start
+## Data Source Compliance
 
-# Stop all servers  
-./server.sh stop
+FlipAssistant is compliant with the OSRS Wiki API guidelines:
+- Uses bulk `/latest` endpoints to minimize request count.
+- Respects rate limits by caching data and performing batch updates.
+- Identifies itself with a descriptive User-Agent.
 
-# Check server status
-./server.sh status
+## Disclaimer
 
-# Restart servers
-./server.sh restart
-```
+This tool is for educational and informational purposes only. The Grand Exchange market is volatile; always perform your own due diligence before making high-value trades.
 
-**Or using Make commands:**
-```bash
-# Start both servers (with proper Ctrl+C handling)
-make dev
+## Acknowledgments
 
-# Stop all servers
-make stop
-
-# Check what's running
-make status
-```
-
-This will start:
-- Backend server on `http://localhost:8080`
-- Frontend development server on `http://localhost:5173`
-
-**Run servers separately:**
-```bash
-# Backend only
-make backend
-
-# Frontend only  
-make frontend
-```
-
-## 📊 How It Works
-
-1. **Data Collection**: The system automatically fetches price data for popular OSRS items every 5 minutes
-2. **Analytics Processing**: Calculates 5-period Simple Moving Averages for both buy and sell prices
-3. **Profit Analysis**: Identifies items with the highest profit margins based on SMA data
-4. **Real-time Updates**: Frontend refreshes suggestions every 30 seconds
-5. **Historical Tracking**: Stores all price data for trend analysis and charting
-
-## 🎯 Currently Tracked Items
-
-- Dragon Platebody (11840)
-- Abyssal Whip (4151)
-- Cannonball (2)
-- Amulet of Fury (6585)
-- Dragon Warhammer (13652)
-- Armadyl Godsword (11802)
-- Bandos Godsword (11804)
-- Saradomin Godsword (11806)
-- Zamorak Godsword (11808)
-- Dragon Claws (13576)
-
-## 🔧 API Endpoints
-
-- `GET /suggest-flips` - Returns top 10 flip opportunities ranked by profit margin
-- `GET /item-history/:id` - Returns price history for a specific item ID
-- `GET /item-info/:id` - Returns item name and details for a specific item ID
-- `GET /tracked-items` - Returns all currently tracked items with names
-
-## 🤝 OSRS Wiki API Compliance
-
-FlipAssistant is fully compliant with [OSRS Wiki API guidelines](https://oldschool.runescape.wiki/w/RuneScape:Real-time_Prices):
-
-- ✅ **Bulk API Usage**: Single `/latest` call gets all items (not 141 individual requests)
-- ✅ **Respectful Rate Limiting**: 1 API call every 10 minutes (6 per hour)
-- ✅ **Proper User-Agent**: Descriptive identifier with contact info
-- ✅ **Efficient Processing**: 141 items updated from 1 API response
-- ✅ **No Individual Item Queries**: Uses bulk endpoint as recommended
-
-## 🗄️ Database Schema
-
-### item_prices
-- `id`: Primary key
-- `item_id`: OSRS item ID
-- `timestamp`: Price recording time
-- `buy_price`: High (sell) price from GE
-- `sell_price`: Low (buy) price from GE
-
-### item_analytics  
-- `item_id`: OSRS item ID (primary key)
-- `sma5_buy`: 5-period moving average of buy prices
-- `sma5_sell`: 5-period moving average of sell prices
-- `last_updated`: Last calculation timestamp
-
-## 🎨 Screenshots
-
-[Add screenshots of your application here]
-
-## 🚧 Future Enhancements
-
-- [ ] Machine learning price prediction models
-- [ ] User accounts and portfolio tracking
-- [ ] Discord/Telegram bot integration
-- [ ] Mobile app (React Native)
-- [ ] Advanced analytics (RSI, MACD, Bollinger Bands)
-- [ ] Risk assessment scoring
-- [ ] Profit calculator with GE tax consideration
-- [ ] Push notifications for optimal flip opportunities
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## ⚠️ Disclaimer
-
-This tool is for educational and informational purposes only. Always do your own research before making any trading decisions. The Grand Exchange can be volatile and profits are not guaranteed.
-
-## 🙏 Acknowledgments
-
-- [OSRS Wiki](https://oldschool.runescape.wiki/) for providing the free price API
-- RuneScape® is a trademark of Jagex Ltd
-- This project is not affiliated with or endorsed by Jagex Ltd
+- **OSRS Wiki** for providing the Real-time Prices API.
+- RuneScape® is a trademark of Jagex Ltd. This project is not affiliated with Jagex.
